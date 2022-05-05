@@ -12,17 +12,18 @@ const state = proxy({
     {
       id: generateId(),
       title: "Fart",
-      completed: false,
+      lasat_completed: undefined,
+      frequency: "daily",
     },
   ],
 });
 
-const addTodo = (title, completed) => {
+const addTodo = (title, last_completed, frequency) => {
   if (!title) {
     return;
   }
   const id = generateId();
-  state.todos.push({ id, title, completed });
+  state.todos.push({ id, title, last_completed, frequency });
 };
 
 const removeTodo = (id) => {
@@ -31,7 +32,12 @@ const removeTodo = (id) => {
 
 const toggleTodo = (id) => {
   const todo = state.todos.find((todo) => todo.id === id);
-  todo.completed = !todo.completed;
+  if (todo.last_completed == undefined) {
+    todo.last_completed = Date.now();
+  } else {
+    todo.last_completed = undefined;
+  }
+  // todo.completed = !todo.completed;
 };
 
 const useFilteredTodos = () => {
@@ -40,9 +46,9 @@ const useFilteredTodos = () => {
     return todos;
   }
   if (filter === "completed") {
-    return todos.filter((todo) => todo.completed);
+    return todos.filter((todo) => todo.last_completed != undefined);
   }
-  return todos.filter((todo) => !todo.completed);
+  return todos.filter((todo) => todo.last_completed == undefined);
 };
 
 const TodoItem = ({ todo }) => (
@@ -54,10 +60,14 @@ const TodoItem = ({ todo }) => (
   >
     <input
       type="checkbox"
-      checked={todo.completed}
+      checked={todo.last_completed}
       onChange={() => toggleTodo(todo.id)}
     />
-    <span style={{ textDecoration: todo.completed ? "line-through" : "" }}>
+    <span
+      style={{
+        textDecoration: todo.last_completed != undefined ? "line-through" : "",
+      }}
+    >
       {todo.title}
     </span>
     <button onClick={() => removeTodo(todo.id)}>Delete</button>
@@ -108,13 +118,22 @@ const TodoList = () => {
     e.preventDefault();
     const title = e.target.title.value;
     e.target.title.value = "";
-    addTodo(title, false);
+    const frequency = e.target.frequency.value;
+
+    addTodo(title, undefined, frequency);
   };
   return (
     <div>
       <Filter />
       <form onSubmit={add}>
         <input name="title" placeholder="Enter title..." />
+
+        <select name="frequency" id="frequency">
+          <option value="once">Once</option>
+          <option value="daily">Daily</option>
+          <option value="weekly">Weekly</option>
+          <option value="monthly">Monthly</option>
+        </select>
       </form>
       {filtered.map((todo) => (
         <TodoItem key={todo.id} todo={todo} />

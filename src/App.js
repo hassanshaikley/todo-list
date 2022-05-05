@@ -1,22 +1,27 @@
 import { proxy, useSnapshot } from "valtio";
 
+const generateId = () =>
+  Math.random()
+    .toString(36)
+    .replace(/[^a-z]+/g, "")
+    .substr(0, 5);
+
 const state = proxy({
   filter: "all",
   todos: [
     {
-      id: 1,
+      id: generateId(),
       title: "Fart",
       completed: false,
     },
   ],
 });
 
-let todoId = 0;
 const addTodo = (title, completed) => {
   if (!title) {
     return;
   }
-  const id = ++todoId;
+  const id = generateId();
   state.todos.push({ id, title, completed });
 };
 

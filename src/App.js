@@ -46,7 +46,12 @@ const useFilteredTodos = () => {
 };
 
 const TodoItem = ({ todo }) => (
-  <div>
+  <div
+    style={{
+      gridTemplateColumns: "fit-content(100px) 200px fit-content(100px)",
+      display: "grid",
+    }}
+  >
     <input
       type="checkbox"
       checked={todo.completed}
@@ -55,7 +60,7 @@ const TodoItem = ({ todo }) => (
     <span style={{ textDecoration: todo.completed ? "line-through" : "" }}>
       {todo.title}
     </span>
-    <button onClick={() => removeTodo(todo.id)}>x</button>
+    <button onClick={() => removeTodo(todo.id)}>Delete</button>
   </div>
 );
 

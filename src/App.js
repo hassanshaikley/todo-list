@@ -127,33 +127,11 @@ const Filter = () => {
   };
   return (
     <div>
-      <label>
-        <input
-          type="radio"
-          value="all"
-          checked={filter === "all"}
-          onChange={handleChange}
-        />
-        All
-      </label>
-      <label>
-        <input
-          type="radio"
-          value="completed"
-          checked={filter === "completed"}
-          onChange={handleChange}
-        />
-        Completed
-      </label>
-      <label>
-        <input
-          type="radio"
-          value="incompleted"
-          checked={filter === "incompleted"}
-          onChange={handleChange}
-        />
-        Incompleted
-      </label>
+      <select name="filter" onChange={handleChange}>
+        <option value="all">All</option>
+        <option value="completed">Completed</option>
+        <option value="incompleted">Incompleted</option>
+      </select>
     </div>
   );
 };

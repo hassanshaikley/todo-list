@@ -96,7 +96,7 @@ const useFilteredTodos = () => {
       return (
         filter == "all" ||
         (filter === "completed" && checkIfCompleted(todo)) ||
-        (filter == "incomplete" && !!checkIfCompleted(todo))
+        (filter == "incompleted" && !checkIfCompleted(todo))
       );
     })
     .filter((todo) => {
@@ -186,12 +186,17 @@ const Filter = () => {
   return (
     <div>
       <div style={{ float: "left" }}>Filters</div>
-      <select name="filter" onChange={handleChange}>
+      {console.log(state.filter, "<<<")}
+      <select name="filter" onChange={handleChange} value={state.filter}>
         <option value="all">All</option>
         <option value="completed">Completed</option>
         <option value="incompleted">Incompleted</option>
       </select>
-      <select name="skip-filter" onChange={handleFilterChange}>
+      <select
+        name="skip-filter"
+        onChange={handleFilterChange}
+        value={state.skipFilter}
+      >
         <option value="all">All</option>
         <option value="revealed">Revealed</option>
         <option value="skipped">Skipped</option>

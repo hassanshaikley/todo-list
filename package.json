@@ -2,6 +2,7 @@
   "name": "todo-2",
   "version": "0.1.0",
   "private": true,
+  "homepage": "hassanshaikley.github.io/todo-list",
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.2.0",
@@ -16,7 +17,7 @@
   },
   "scripts": {
     "predeploy": "npm run build",
-    "deploy": "gh-pages -b master -d build -r hassanshaikley/todo-list",
+    "deploy": "gh-pages -b master -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",

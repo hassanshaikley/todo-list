@@ -1,5 +1,8 @@
-import { proxy, useSnapshot, subscribe, snapshot } from "valtio";
+import { useSnapshot } from "valtio";
 import spacetime from "spacetime";
+import state from "./state";
+
+import { generateId } from "./utils";
 
 window.spacetime = spacetime;
 let colorA = "0x32373B";
@@ -7,50 +10,6 @@ let colorB = "0x4A5859";
 let colorC = "0xF4D6CC";
 let colorD = "0xF4B860";
 let colorE = "0xC83E4D";
-
-const generateId = () =>
-  Math.random()
-    .toString(36)
-    .replace(/[^a-z]+/g, "")
-    .substr(0, 5);
-
-let state;
-
-if (localStorage.getItem("store") == null) {
-  state = proxy({
-    filter: "all",
-    skipFilter: "all",
-    todos: [
-      {
-        id: generateId(),
-        title: "Read for 5 minutes",
-        // last_completed: "never",
-        last_completed: spacetime
-          .now()
-          .subtract(8, "days")
-          .unixFmt("yyyy.MM.dd h:mm a"),
-        last_skipped: "never",
-        frequency: "daily",
-      },
-    ],
-  });
-} else {
-  const thing = localStorage.getItem("store");
-  const thingJson = JSON.parse(thing);
-
-  state = proxy(thingJson);
-}
-
-const unsubscribe = subscribe(state, () => {
-  const stateSnapshot = snapshot(state);
-
-  const storeString = JSON.stringify({
-    todos: stateSnapshot.todos,
-    filter: stateSnapshot.filter,
-    skipFilter: stateSnapshot.skipFilter,
-  });
-  localStorage.setItem("store", storeString);
-});
 
 const addTodo = (title, last_completed, frequency) => {
   if (!title) {
@@ -168,7 +127,7 @@ const checkIfCompleted = ({ last_completed, frequency }) => {
 
 const checkIfSkipped = ({ last_skipped }) => {
   if (last_skipped == "never") return false;
-  console.log(last_skipped);
+
   let s = spacetime.now();
   last_skipped = spacetime(last_skipped);
 
@@ -186,7 +145,7 @@ const Filter = () => {
   return (
     <div>
       <div style={{ float: "left" }}>Filters</div>
-      {console.log(state.filter, "<<<")}
+
       <select name="filter" onChange={handleChange} value={state.filter}>
         <option value="all">All</option>
         <option value="completed">Completed</option>

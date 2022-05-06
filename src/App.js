@@ -211,7 +211,7 @@ const TodoList = () => {
     addTodo(title, "never", frequency);
   };
   return (
-    <div>
+    <div style={{ maxWidth: "fit-content", margin: "auto" }}>
       <Filter />
       <form onSubmit={add}>
         <input name="title" placeholder="Enter title..." />

@@ -12,7 +12,7 @@ const state = proxy({
     {
       id: generateId(),
       title: "Fart",
-      lasat_completed: undefined,
+      last_completed: "never",
       frequency: "daily",
     },
   ],
@@ -32,10 +32,10 @@ const removeTodo = (id) => {
 
 const toggleTodo = (id) => {
   const todo = state.todos.find((todo) => todo.id === id);
-  if (todo.last_completed == undefined) {
+  if (todo.last_completed == "never") {
     todo.last_completed = Date.now();
   } else {
-    todo.last_completed = undefined;
+    todo.last_completed = "never";
   }
   // todo.completed = !todo.completed;
 };
@@ -46,9 +46,9 @@ const useFilteredTodos = () => {
     return todos;
   }
   if (filter === "completed") {
-    return todos.filter((todo) => todo.last_completed != undefined);
+    return todos.filter((todo) => todo.last_completed != "never");
   }
-  return todos.filter((todo) => todo.last_completed == undefined);
+  return todos.filter((todo) => todo.last_completed == "never");
 };
 
 const TodoItem = ({ todo }) => (
@@ -60,12 +60,12 @@ const TodoItem = ({ todo }) => (
   >
     <input
       type="checkbox"
-      checked={todo.last_completed}
+      checked={todo.last_completed != "never"}
       onChange={() => toggleTodo(todo.id)}
     />
     <span
       style={{
-        textDecoration: todo.last_completed != undefined ? "line-through" : "",
+        textDecoration: todo.last_completed != "never" ? "line-through" : "",
       }}
     >
       {todo.title}
@@ -120,7 +120,7 @@ const TodoList = () => {
     e.target.title.value = "";
     const frequency = e.target.frequency.value;
 
-    addTodo(title, undefined, frequency);
+    addTodo(title, "never", frequency);
   };
   return (
     <div>

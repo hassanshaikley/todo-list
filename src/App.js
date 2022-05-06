@@ -109,6 +109,7 @@ const TodoItem = ({ todo }) => (
       gridTemplateColumns:
         "fit-content(100px) 200px fit-content(100px) fit-content(100px) fit-content(100px)",
       display: "grid",
+      columnGap: "5px",
     }}
   >
     <input

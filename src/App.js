@@ -7,18 +7,26 @@ const generateId = () =>
     .replace(/[^a-z]+/g, "")
     .substr(0, 5);
 
-const state = proxy({
-  filter: "all",
-  todos: [
-    {
-      id: generateId(),
-      title: "Fart",
-      // last_completed: "never",
-      last_completed: spacetime.now().subtract(8, "days"),
-      frequency: "weekly",
-    },
-  ],
-});
+let state;
+
+if (localStorage.getItem("store") == null) {
+  state = proxy({
+    filter: "all",
+    todos: [
+      {
+        id: generateId(),
+        title: "Fart",
+        // last_completed: "never",
+        last_completed: spacetime.now().subtract(8, "days"),
+        frequency: "weekly",
+      },
+    ],
+  });
+} else {
+  console.log(localStorage.getItem("store"));
+  window.xx = localStorage.getItem("store");
+  state = proxy(localStorage.getItem("store"));
+}
 
 const addTodo = (title, last_completed, frequency) => {
   if (!title) {
@@ -47,9 +55,9 @@ const useFilteredTodos = () => {
     return todos;
   }
   if (filter === "completed") {
-    return todos.filter((todo) => todo.last_completed != "never");
+    return todos.filter((todo) => checkIfCompleted(todo));
   }
-  return todos.filter((todo) => todo.last_completed == "never");
+  return todos.filter((todo) => !checkIfCompleted(todo));
 };
 
 const TodoItem = ({ todo }) => (

@@ -1,6 +1,12 @@
 import { proxy, useSnapshot, subscribe, snapshot } from "valtio";
 import spacetime from "spacetime";
 
+let colorA = "0x32373B";
+let colorB = "0x4A5859";
+let colorC = "0xF4D6CC";
+let colorD = "0xF4B860";
+let colorE = "0xC83E4D";
+
 const generateId = () =>
   Math.random()
     .toString(36)
@@ -116,6 +122,10 @@ const TodoItem = ({ todo }) => (
         "fit-content(100px) 200px fit-content(100px) fit-content(100px) fit-content(100px)",
       display: "grid",
       columnGap: "5px",
+      // borderBottom: "3px solid black",
+      // borderRight: "3px solid black",
+      width: "400px",
+      padding: "2px",
     }}
   >
     <input

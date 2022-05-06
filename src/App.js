@@ -1,6 +1,7 @@
 import { proxy, useSnapshot, subscribe, snapshot } from "valtio";
 import spacetime from "spacetime";
 
+window.spacetime = spacetime;
 let colorA = "0x32373B";
 let colorB = "0x4A5859";
 let colorC = "0xF4D6CC";
@@ -152,10 +153,8 @@ const checkIfCompleted = ({ last_completed, frequency }) => {
 
   if (last_completed == "never") return false;
 
-  console.log(last_completed);
-  last_completed = s.time(last_completed);
+  last_completed = spacetime(last_completed);
 
-  console.log(s.diff(last_completed, "days"));
   if (frequency == "once") {
     return true;
   } else if (frequency == "daily") {
@@ -171,7 +170,7 @@ const checkIfSkipped = ({ last_skipped }) => {
   if (last_skipped == "never") return false;
   console.log(last_skipped);
   let s = spacetime.now();
-  last_skipped = s.time(last_skipped);
+  last_skipped = spacetime(last_skipped);
 
   return last_skipped.diff(s, "days") <= 1;
 };

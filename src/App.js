@@ -28,13 +28,12 @@ if (localStorage.getItem("store") == null) {
 } else {
   const thing = localStorage.getItem("store");
   const thingJson = JSON.parse(thing);
-  console.log(thingJson);
+
   state = proxy(thingJson);
 }
 
 const unsubscribe = subscribe(state, () => {
   const stateSnapshot = snapshot(state);
-  console.log("Saving state to store");
 
   const storeString = JSON.stringify({
     todos: stateSnapshot.todos,
@@ -78,7 +77,8 @@ const useFilteredTodos = () => {
 const TodoItem = ({ todo }) => (
   <div
     style={{
-      gridTemplateColumns: "fit-content(100px) 200px fit-content(100px)",
+      gridTemplateColumns:
+        "fit-content(100px) 200px fit-content(100px) fit-content(100px)",
       display: "grid",
     }}
   >
@@ -94,6 +94,10 @@ const TodoItem = ({ todo }) => (
     >
       {todo.title}
     </span>
+    <button onClick={() => {}} style={{ textTransform: "capitalize" }}>
+      {todo.frequency}
+    </button>
+
     <button onClick={() => removeTodo(todo.id)}>Delete</button>
   </div>
 );
@@ -104,16 +108,12 @@ const checkIfCompleted = ({ last_completed, frequency }) => {
   if (last_completed == "never") return false;
 
   last_completed = s.time(last_completed);
-  console.log(last_completed);
 
   if (frequency == "once") {
     return true;
   } else if (frequency == "daily") {
-    console.log(last_completed.diff(s, "days"));
-
     return last_completed.diff(s, "days") <= 1;
   } else if (frequency == "weekly") {
-    console.log(last_completed.diff(s, "days"));
     return last_completed.diff(s, "days") <= 7;
   } else if (frequency == "monthly") {
     return last_completed.diff(s, "days") <= 30;

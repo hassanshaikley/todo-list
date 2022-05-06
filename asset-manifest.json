@@ -1,12 +1,12 @@
 {
   "files": {
-    "main.js": "/static/js/main.b177e492.js",
-    "static/js/787.ca043bcb.chunk.js": "/static/js/787.ca043bcb.chunk.js",
-    "index.html": "/index.html",
-    "main.b177e492.js.map": "/static/js/main.b177e492.js.map",
-    "787.ca043bcb.chunk.js.map": "/static/js/787.ca043bcb.chunk.js.map"
+    "main.js": "/hassanshaikley.github.io/todo-list/static/js/main.fa2baa65.js",
+    "static/js/787.ca043bcb.chunk.js": "/hassanshaikley.github.io/todo-list/static/js/787.ca043bcb.chunk.js",
+    "index.html": "/hassanshaikley.github.io/todo-list/index.html",
+    "main.fa2baa65.js.map": "/hassanshaikley.github.io/todo-list/static/js/main.fa2baa65.js.map",
+    "787.ca043bcb.chunk.js.map": "/hassanshaikley.github.io/todo-list/static/js/787.ca043bcb.chunk.js.map"
   },
   "entrypoints": [
-    "static/js/main.b177e492.js"
+    "static/js/main.fa2baa65.js"
   ]
 }

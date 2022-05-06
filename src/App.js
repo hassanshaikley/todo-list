@@ -50,7 +50,13 @@ const addTodo = (title, last_completed, frequency) => {
     return;
   }
   const id = generateId();
-  state.todos.push({ id, title, last_completed, frequency });
+  state.todos.push({
+    id,
+    title,
+    last_completed,
+    frequency,
+    last_skipped: "never",
+  });
 };
 
 const removeTodo = (id) => {
@@ -159,6 +165,7 @@ const checkIfCompleted = ({ last_completed, frequency }) => {
 
 const checkIfSkipped = ({ last_skipped }) => {
   if (last_skipped == "never") return false;
+  console.log(last_skipped);
   let s = spacetime.now();
   last_skipped = s.time(last_skipped);
 
@@ -183,8 +190,8 @@ const Filter = () => {
 
       <select name="skip-filter" onChange={handleFilterChange}>
         <option value="all">All</option>
-        <option value="skipped">Skipped</option>
         <option value="revealed">Revealed</option>
+        <option value="skipped">Skipped</option>
       </select>
     </div>
   );

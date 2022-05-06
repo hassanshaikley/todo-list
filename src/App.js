@@ -1,4 +1,4 @@
-import { proxy, useSnapshot } from "valtio";
+import { proxy, useSnapshot, subscribe, snapshot } from "valtio";
 import spacetime from "spacetime";
 
 const generateId = () =>
@@ -17,16 +17,31 @@ if (localStorage.getItem("store") == null) {
         id: generateId(),
         title: "Fart",
         // last_completed: "never",
-        last_completed: spacetime.now().subtract(8, "days"),
+        last_completed: spacetime
+          .now()
+          .subtract(8, "days")
+          .unixFmt("yyyy.MM.dd h:mm a"),
         frequency: "weekly",
       },
     ],
   });
 } else {
-  console.log(localStorage.getItem("store"));
-  window.xx = localStorage.getItem("store");
-  state = proxy(localStorage.getItem("store"));
+  const thing = localStorage.getItem("store");
+  const thingJson = JSON.parse(thing);
+  console.log(thingJson);
+  state = proxy(thingJson);
 }
+
+const unsubscribe = subscribe(state, () => {
+  const stateSnapshot = snapshot(state);
+  console.log("Saving state to store");
+
+  const storeString = JSON.stringify({
+    todos: stateSnapshot.todos,
+    filter: stateSnapshot.filter,
+  });
+  localStorage.setItem("store", storeString);
+});
 
 const addTodo = (title, last_completed, frequency) => {
   if (!title) {
@@ -43,7 +58,7 @@ const removeTodo = (id) => {
 const toggleTodo = (id) => {
   const todo = state.todos.find((todo) => todo.id === id);
   if (todo.last_completed == "never") {
-    todo.last_completed = spacetime.now();
+    todo.last_completed = spacetime.now().unixFmt("yyyy.MM.dd h:mm a");
   } else {
     todo.last_completed = "never";
   }
@@ -87,6 +102,9 @@ const checkIfCompleted = ({ last_completed, frequency }) => {
   let s = spacetime.now();
 
   if (last_completed == "never") return false;
+
+  last_completed = s.time(last_completed);
+  console.log(last_completed);
 
   if (frequency == "once") {
     return true;

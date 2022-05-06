@@ -29,7 +29,7 @@ if (localStorage.getItem("store") == null) {
   state = proxy(thingJson);
 }
 
-const unsubscribe = subscribe(state, () => {
+subscribe(state, () => {
   const stateSnapshot = snapshot(state);
 
   const storeString = JSON.stringify({

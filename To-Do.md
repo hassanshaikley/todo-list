@@ -1,2 +1,1 @@
-1. Use timestamp for last completed
-2. Support things that are repeating
+1. Huge bug with the time calc being wrong lol

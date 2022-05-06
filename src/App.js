@@ -22,14 +22,14 @@ if (localStorage.getItem("store") == null) {
     todos: [
       {
         id: generateId(),
-        title: "Fart",
+        title: "Read for 5 minutes",
         // last_completed: "never",
         last_completed: spacetime
           .now()
           .subtract(8, "days")
           .unixFmt("yyyy.MM.dd h:mm a"),
         last_skipped: "never",
-        frequency: "weekly",
+        frequency: "daily",
       },
     ],
   });
@@ -105,14 +105,6 @@ const useFilteredTodos = () => {
         (skipFilter == "revealed" && !checkIfSkipped(todo))
       );
     });
-
-  // if (filter === "all") {
-  //   return todos;
-  // }
-  // if (filter === "completed") {
-  //   return todos.filter((todo) => checkIfCompleted(todo));
-  // }
-  // return todos.filter((todo) => !checkIfCompleted(todo));
 };
 
 const TodoItem = ({ todo }) => (
@@ -160,8 +152,10 @@ const checkIfCompleted = ({ last_completed, frequency }) => {
 
   if (last_completed == "never") return false;
 
+  console.log(last_completed);
   last_completed = s.time(last_completed);
 
+  console.log(s.diff(last_completed, "days"));
   if (frequency == "once") {
     return true;
   } else if (frequency == "daily") {

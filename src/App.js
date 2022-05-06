@@ -185,12 +185,12 @@ const Filter = () => {
   };
   return (
     <div>
+      <div style={{ float: "left" }}>Filters</div>
       <select name="filter" onChange={handleChange}>
         <option value="all">All</option>
         <option value="completed">Completed</option>
         <option value="incompleted">Incompleted</option>
       </select>
-
       <select name="skip-filter" onChange={handleFilterChange}>
         <option value="all">All</option>
         <option value="revealed">Revealed</option>
@@ -213,6 +213,8 @@ const TodoList = () => {
   return (
     <div style={{ maxWidth: "fit-content", margin: "auto" }}>
       <Filter />
+      <div style={{ float: "left" }}>New</div>
+
       <form onSubmit={add}>
         <input name="title" placeholder="Enter title..." />
 

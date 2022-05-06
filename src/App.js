@@ -1,4 +1,5 @@
 import { proxy, useSnapshot } from "valtio";
+import spacetime from "spacetime";
 
 const generateId = () =>
   Math.random()
@@ -12,8 +13,9 @@ const state = proxy({
     {
       id: generateId(),
       title: "Fart",
-      last_completed: "never",
-      frequency: "daily",
+      // last_completed: "never",
+      last_completed: spacetime.now().subtract(8, "days"),
+      frequency: "weekly",
     },
   ],
 });
@@ -33,11 +35,10 @@ const removeTodo = (id) => {
 const toggleTodo = (id) => {
   const todo = state.todos.find((todo) => todo.id === id);
   if (todo.last_completed == "never") {
-    todo.last_completed = Date.now();
+    todo.last_completed = spacetime.now();
   } else {
     todo.last_completed = "never";
   }
-  // todo.completed = !todo.completed;
 };
 
 const useFilteredTodos = () => {
@@ -60,12 +61,12 @@ const TodoItem = ({ todo }) => (
   >
     <input
       type="checkbox"
-      checked={todo.last_completed != "never"}
+      checked={checkIfCompleted(todo)}
       onChange={() => toggleTodo(todo.id)}
     />
     <span
       style={{
-        textDecoration: todo.last_completed != "never" ? "line-through" : "",
+        textDecoration: checkIfCompleted(todo) ? "line-through" : "",
       }}
     >
       {todo.title}
@@ -73,6 +74,25 @@ const TodoItem = ({ todo }) => (
     <button onClick={() => removeTodo(todo.id)}>Delete</button>
   </div>
 );
+
+const checkIfCompleted = ({ last_completed, frequency }) => {
+  let s = spacetime.now();
+
+  if (last_completed == "never") return false;
+
+  if (frequency == "once") {
+    return true;
+  } else if (frequency == "daily") {
+    console.log(last_completed.diff(s, "days"));
+
+    return last_completed.diff(s, "days") <= 1;
+  } else if (frequency == "weekly") {
+    console.log(last_completed.diff(s, "days"));
+    return last_completed.diff(s, "days") <= 7;
+  } else if (frequency == "monthly") {
+    return last_completed.diff(s, "days") <= 30;
+  }
+};
 
 const Filter = () => {
   const { filter } = useSnapshot(state);

@@ -12,6 +12,7 @@ let state;
 if (localStorage.getItem("store") == null) {
   state = proxy({
     filter: "all",
+    skipFilter: "all",
     todos: [
       {
         id: generateId(),
@@ -21,6 +22,7 @@ if (localStorage.getItem("store") == null) {
           .now()
           .subtract(8, "days")
           .unixFmt("yyyy.MM.dd h:mm a"),
+        last_skipped: "never",
         frequency: "weekly",
       },
     ],
@@ -38,6 +40,7 @@ const unsubscribe = subscribe(state, () => {
   const storeString = JSON.stringify({
     todos: stateSnapshot.todos,
     filter: stateSnapshot.filter,
+    skipFilter: stateSnapshot.skipFilter,
   });
   localStorage.setItem("store", storeString);
 });
@@ -54,6 +57,15 @@ const removeTodo = (id) => {
   state.todos = state.todos.filter((todo) => todo.id !== id);
 };
 
+const toggleSkipTodo = (id) => {
+  const todo = state.todos.find((todo) => todo.id === id);
+  if (todo.last_skipped == "never") {
+    todo.last_skipped = spacetime.now().unixFmt("yyyy.MM.dd h:mm a");
+  } else {
+    todo.last_skipped = "never";
+  }
+};
+
 const toggleTodo = (id) => {
   const todo = state.todos.find((todo) => todo.id === id);
   if (todo.last_completed == "never") {
@@ -64,21 +76,38 @@ const toggleTodo = (id) => {
 };
 
 const useFilteredTodos = () => {
-  const { filter, todos } = useSnapshot(state);
-  if (filter === "all") {
-    return todos;
-  }
-  if (filter === "completed") {
-    return todos.filter((todo) => checkIfCompleted(todo));
-  }
-  return todos.filter((todo) => !checkIfCompleted(todo));
+  const { filter, todos, skipFilter } = useSnapshot(state);
+
+  return todos
+    .filter((todo) => {
+      return (
+        filter == "all" ||
+        (filter === "completed" && checkIfCompleted(todo)) ||
+        (filter == "incomplete" && !!checkIfCompleted(todo))
+      );
+    })
+    .filter((todo) => {
+      return (
+        skipFilter == "all" ||
+        (skipFilter == "skipped" && checkIfSkipped(todo)) ||
+        (skipFilter == "revealed" && !checkIfSkipped(todo))
+      );
+    });
+
+  // if (filter === "all") {
+  //   return todos;
+  // }
+  // if (filter === "completed") {
+  //   return todos.filter((todo) => checkIfCompleted(todo));
+  // }
+  // return todos.filter((todo) => !checkIfCompleted(todo));
 };
 
 const TodoItem = ({ todo }) => (
   <div
     style={{
       gridTemplateColumns:
-        "fit-content(100px) 200px fit-content(100px) fit-content(100px)",
+        "fit-content(100px) 200px fit-content(100px) fit-content(100px) fit-content(100px)",
       display: "grid",
     }}
   >
@@ -94,6 +123,13 @@ const TodoItem = ({ todo }) => (
     >
       {todo.title}
     </span>
+    <button
+      onClick={() => {
+        toggleSkipTodo(todo.id);
+      }}
+    >
+      {checkIfSkipped(todo) ? "Unskip" : "Skip"}
+    </button>
     <button onClick={() => {}} style={{ textTransform: "capitalize" }}>
       {todo.frequency}
     </button>
@@ -120,10 +156,21 @@ const checkIfCompleted = ({ last_completed, frequency }) => {
   }
 };
 
+const checkIfSkipped = ({ last_skipped }) => {
+  if (last_skipped == "never") return false;
+  let s = spacetime.now();
+  last_skipped = s.time(last_skipped);
+
+  return last_skipped.diff(s, "days") <= 1;
+};
+
 const Filter = () => {
-  const { filter } = useSnapshot(state);
+  const { filter, skipFilter } = useSnapshot(state);
   const handleChange = (e) => {
     state.filter = e.target.value;
+  };
+  const handleFilterChange = (e) => {
+    state.skipFilter = e.target.value;
   };
   return (
     <div>
@@ -131,6 +178,12 @@ const Filter = () => {
         <option value="all">All</option>
         <option value="completed">Completed</option>
         <option value="incompleted">Incompleted</option>
+      </select>
+
+      <select name="skip-filter" onChange={handleFilterChange}>
+        <option value="all">All</option>
+        <option value="skipped">Skipped</option>
+        <option value="revealed">Revealed</option>
       </select>
     </div>
   );
